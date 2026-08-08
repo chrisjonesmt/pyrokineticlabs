@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PK Labs | Shopping Cart</title>
+
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/favicon/favicon-48x48.png">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/favicon-180x180.png">
+
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon/favicon-512x512.png">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body>
+
+<header>
+  <nav class="navbar inner-navbar">
+    <a href="index.html" class="logo">
+      <img src="assets/images/logo.png"
+        alt="Pyro Kinetic Labs Logo"
+      >
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="coa.html">COAs</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="contact.html">Contact</a></li>
+
+      <li>
+        <a href="cart.html" class="cart-nav-link active">
+          Cart
+          <span class="cart-count">0</span>
+        </a>
+      </li>
+    </ul>
+
+  </nav>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a>
+  <span>/</span>
+  <span>Cart</span>
+</div>
+
+<main class="cart-page">
+
+  <section class="cart-heading">
+    <span class="product-category">Your Order</span>
+
+    <h1>Shopping Cart</h1>
+
+    <p>
+      Bulk discounts are calculated independently for each product.
+        </p>
+  </section>
+
+  <div class="cart-layout">
+
+    <section class="cart-items-section">
+
+      <div class="cart-items-heading">
+        <h2>Your Items</h2>
+
+        <button
+          type="button"
+          class="clear-cart-button"
+          id="clear-cart-button"
+        >
+          Clear Cart
+        </button>
+      </div>
+
+      <div
+        class="cart-items"
+        id="cart-items"
+        aria-live="polite"
+      ></div>
+
+      <div class="empty-cart" id="empty-cart">
+        <h2>Your cart is empty</h2>
+
+        <p>
+          Browse our research products and add items to begin your order.
+        </p>
+
+        <a href="shop.html" class="btn-primary">
+          Continue Shopping
+        </a>
+      </div>
+
+    </section>
+
+    <aside class="cart-summary" id="cart-summary">
+
+      <h2>Order Summary</h2>
+
+      <div class="summary-line">
+        <span>Regular subtotal</span>
+        <strong id="regular-subtotal">$0.00</strong>
+      </div>
+
+      <div class="summary-line discount-summary-line">
+        <span>Bulk savings</span>
+        <strong id="bulk-savings">−$0.00</strong>
+      </div>
+
+      <div class="summary-line">
+        <span>Discounted subtotal</span>
+        <strong id="discounted-subtotal">$0.00</strong>
+      </div>
+
+      <div class="summary-line">
+        <span>Shipping</span>
+        <strong id="shipping-cost">$0.00</strong>
+      </div>
+
+      <div
+        class="shipping-progress-message"
+        id="shipping-progress-message"
+      ></div>
+
+      <div class="summary-total">
+        <span>Estimated Total</span>
+        <strong id="cart-total">$0.00</strong>
+      </div>
+
+      <p class="cart-summary-note">
+        Taxes, if applicable, and final payment details will be confirmed
+        before the order is completed.
+      </p>
+
+      <button
+        type="button"
+        class="btn-primary cart-checkout-button"
+        id="checkout-button"
+      >
+        Continue to Checkout
+      </button>
+
+      <a href="shop.html" class="continue-shopping-link">
+        ← Continue Shopping
+      </a>
+
+      <p
+        class="checkout-status-message"
+        id="checkout-status-message"
+        aria-live="polite"
+      ></p>
+
+    </aside>
+
+  </div>
+
+</main>
+
+<footer class="site-footer">
+
+  <div class="footer-policy-links">
+    <a href="terms.html" class="policy-footer-link">Terms & Conditions</a>
+    <a href="privacy.html" class="policy-footer-link">Privacy Policy</a>
+    <a href="shipping.html" class="policy-footer-link">Shipping Policy</a>
+    <a href="refunds.html" class="policy-footer-link">Refunds & Returns</a>
+  </div>
+
+  <p>© 2026 Pyro Kinetic Labs</p>
+
+  <p class="footer-disclaimer">
+    FOR RESEARCH USE ONLY • NOT FOR HUMAN CONSUMPTION
+  </p>
+
+</footer>
+    <p>
+        © 2026 Pyro Kinetic Labs
+    </p>
+
+    <p class="footer-disclaimer">
+        FOR RESEARCH USE ONLY • NOT FOR HUMAN CONSUMPTION
+    </p>
+</footer>
+
+<script src="assets/js/cart.js"></script>
+
+</body>
+</html>
