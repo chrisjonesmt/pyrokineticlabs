@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>PK Labs | Order Management</title>
+
+  <link
+    rel="stylesheet"
+    href="assets/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="assets/css/responsive.css"
+  >
+</head>
+
+<body>
+
+  <main class="admin-orders-page">
+
+    <!-- ========================================
+         ADMIN HEADER
+         ======================================== -->
+
+    <section class="admin-header">
+
+      <a href="index.html" class="admin-logo">
+        <img
+          src="assets/images/Logo.png"
+          alt="Pyro Kinetic Labs"
+        >
+      </a>
+
+      <div>
+        <p class="eyebrow">
+          Private Administration
+        </p>
+
+        <h1>Order Management</h1>
+
+        <p class="admin-header-description">
+          View and manage Pyro Kinetic Labs customer orders.
+        </p>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         LOGIN
+         ======================================== -->
+
+    <section
+      class="admin-login-card"
+      id="admin-login-card"
+    >
+
+      <h2>Admin Access</h2>
+
+      <p>
+        Enter your administrator key to access order management.
+      </p>
+
+      <form id="admin-login-form">
+
+        <label for="admin-key">
+          Admin Key
+        </label>
+
+        <input
+          type="password"
+          id="admin-key"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          type="submit"
+          class="btn-primary"
+        >
+          Access Orders
+        </button>
+
+      </form>
+
+      <p
+        class="admin-login-message"
+        id="admin-login-message"
+        aria-live="polite"
+      ></p>
+
+    </section>
+
+
+    <!-- ========================================
+         DASHBOARD
+         Hidden until authenticated
+         ======================================== -->
+
+    <section
+      class="admin-dashboard"
+      id="admin-dashboard"
+      hidden
+    >
+
+      <div class="admin-dashboard-toolbar">
+
+        <div>
+          <p class="eyebrow">
+            PKL Orders
+          </p>
+
+          <h2>Customer Orders</h2>
+        </div>
+
+
+        <div class="admin-toolbar-actions">
+
+          <button
+            type="button"
+            class="admin-refresh-button"
+            id="admin-refresh-button"
+          >
+            Refresh Orders
+          </button>
+
+          <button
+            type="button"
+            class="admin-logout-button"
+            id="admin-logout-button"
+          >
+            Lock Dashboard
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- Summary cards -->
+
+      <div class="admin-summary-grid">
+
+        <article class="admin-summary-card">
+
+          <span>Total Orders</span>
+
+          <strong id="admin-total-orders">
+            0
+          </strong>
+
+        </article>
+
+
+        <article class="admin-summary-card">
+
+          <span>Awaiting Payment</span>
+
+          <strong id="admin-awaiting-payment">
+            0
+          </strong>
+
+        </article>
+
+
+        <article class="admin-summary-card">
+
+          <span>Processing</span>
+
+          <strong id="admin-processing-orders">
+            0
+          </strong>
+
+        </article>
+
+
+        <article class="admin-summary-card">
+
+          <span>Shipped</span>
+
+          <strong id="admin-shipped-orders">
+            0
+          </strong>
+
+        </article>
+
+      </div>
+
+
+      <!-- Search -->
+
+      <div class="admin-search-row">
+
+        <label for="admin-order-search">
+          Search Orders
+        </label>
+
+        <input
+          type="search"
+          id="admin-order-search"
+          placeholder="Order number, customer name, email..."
+        >
+
+      </div>
+
+
+      <!-- Status -->
+
+      <p
+        class="admin-orders-message"
+        id="admin-orders-message"
+        aria-live="polite"
+      ></p>
+
+
+      <!-- Orders -->
+
+      <div
+        class="admin-orders-list"
+        id="admin-orders-list"
+      ></div>
+
+    </section>
+
+  </main>
+
+
+  <script src="assets/js/admin-orders.js"></script>
+
+</body>
+</html>

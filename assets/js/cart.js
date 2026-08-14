@@ -853,7 +853,7 @@ if (!confirmationMessage || !updatedProduct) {
         FREE_SHIPPING_THRESHOLD
       ) {
         shippingMessageElement.textContent =
-          "Free FedEx 2Day shipping unlocked.";
+          "Free UPS shipping unlocked.";
 
         shippingMessageElement.classList.add(
           "free-shipping-unlocked"
@@ -868,7 +868,7 @@ if (!confirmationMessage || !updatedProduct) {
 
       shippingMessageElement.textContent =
         `Add ${formatCurrency(remainingAmount)} more ` +
-        `to unlock free FedEx 2Day shipping.`;
+        `to unlock free UPS shipping.`;
 
       shippingMessageElement.classList.remove(
         "free-shipping-unlocked"
@@ -889,16 +889,12 @@ if (!confirmationMessage || !updatedProduct) {
     });
 
     checkoutButton?.addEventListener("click", () => {
-      if (getCart().length === 0) {
-        return;
-      }
+  if (getCart().length === 0) {
+    return;
+  }
 
-      if (checkoutStatusMessage) {
-        checkoutStatusMessage.textContent =
-          "Checkout setup is the next step. " +
-          "Your cart has been saved.";
-      }
-    });
+  window.location.href = "checkout.html";
+});
 
     renderCart();
   }
