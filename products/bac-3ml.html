@@ -75,7 +75,7 @@
 
       <div class="price-coa-row">
 
-  <div class="price">$5.00</div>
+  <div class="price">$6.00</div>
 
   <a
     href="../assets/coa/bacwater-3ml-coa.pdf"
@@ -114,7 +114,7 @@
   class="product-purchase"
   data-product-id="bac-water-3ml"
   data-product-name="BAC Water | 3ml"
-  data-product-price="5"
+  data-product-price="6"
   data-product-image="assets/images/products/bac-3ml.png"
   data-product-url="products/bac-3ml.html"
 >
@@ -199,7 +199,7 @@
       box-shadow: none;
     "
   >
-    Temporarily Unavailable
+    Pending COA - Not Available for Purchase
   </button>
 
   <p
@@ -260,7 +260,10 @@ This product contains sterile water with a bacteriostatic preservative and is su
 
     <div class="product-grid">
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="rt3-10"
+>
           
           <a href="rt3-10.html"
               class="product-card-overlay"
@@ -272,10 +275,16 @@ This product contains sterile water with a bacteriostatic preservative and is su
             <span class="product-category">Metabolic Research</span>
             <h3>RT-3</h3>
             <p class="product-size">10mg</p>
+            <p class="related-price product-price-card">$45.00</p>
+
+            <p class="product-stock"></p>
             <a href="rt3-10.html" class="product-link">View Product →</a>
         </div>
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="tz2-10"
+>
           <a href="tz2-10.html"
               class="product-card-overlay"
               aria-label="View TZ-2 10mg">
@@ -286,14 +295,20 @@ This product contains sterile water with a bacteriostatic preservative and is su
             <span class="product-category">Metabolic Research</span>
             <h3>TZ-2</h3>
             <p class="product-size">10mg</p>
+            <p class="related-price product-price-card">$40.00</p>
+
+            <p class="product-stock"></p>
             <a href="tz2-10.html" class="product-link">View Product →</a>
         </div>
 
         
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="bpc157-10"
+>
           <div class="unavailable-ribbon">
-  Coming Soon
+  Pending COA
 </div>
           <a href="bpc157-10.html"
               class="product-card-overlay"
@@ -305,6 +320,9 @@ This product contains sterile water with a bacteriostatic preservative and is su
             <span class="product-category">Recovery Research</span>
             <h3>BPC-157</h3>
             <p class="product-size">10mg</p>
+            <p class="related-price product-price-card">$35.00</p>
+
+            <p class="product-stock"></p>
             <a href="bpc157-10.html" class="product-link">View Product →</a>
         </div>
 
@@ -332,5 +350,16 @@ This product contains sterile water with a bacteriostatic preservative and is su
 </footer>
 
 <script src="../assets/js/cart.js"></script>
+<script src="../assets/js/product-data.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await window.PKLProducts.updateProductCards();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+</script>
 </body>
 </html>

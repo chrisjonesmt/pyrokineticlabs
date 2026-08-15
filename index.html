@@ -201,7 +201,10 @@
 
   <div class="product-grid">
 
- <div class="product-card">
+ <div
+  class="product-card"
+  data-product-id="rt3-10"
+>
 
     <a href="products/rt3-10.html"
        class="product-card-overlay"
@@ -224,13 +227,18 @@
         10mg
     </p>
 
-    <p class="featured-price">$60.00</p>
+   <p class="featured-price product-price-card">$45.00</p>
+
+<p class="product-stock"></p>
 
     <span class="product-link">View Product →</span>
 
 </div>
 
- <div class="product-card">
+ <div
+  class="product-card"
+  data-product-id="tz2-10"
+>
 
     <a href="products/tz2-10.html"
        class="product-card-overlay"
@@ -253,15 +261,18 @@
         10mg
     </p>
 
-    <p class="featured-price">$50.00</p>
-
+    <p class="featured-price product-price-card">$40.00</p>
+    <p class="product-stock"></p>
     <span class="product-link">View Product →</span>
 
 </div>
 
-<div class="product-card">
+<div
+  class="product-card"
+  data-product-id="bpc157-10"
+>
  <div class="unavailable-ribbon">
- Coming Soon
+ Pending COA
 </div>
     <a href="products/bpc157-10.html"
        class="product-card-overlay"
@@ -284,13 +295,18 @@
         10mg
     </p>
 
-    <p class="featured-price">$45.00</p>
+    <p class="featured-price product-price-card">$35.00</p>
+
+    <p class="product-stock"></p>
 
     <span class="product-link">View Product →</span>
 
 </div>
 
- <div class="product-card">
+ <div
+  class="product-card"
+  data-product-id="tb500-10"
+>
 
     <a href="products/tb500-10.html"
        class="product-card-overlay"
@@ -313,7 +329,9 @@
         10mg
     </p>
 
-    <p class="featured-price">$55.00</p>
+    <p class="featured-price product-price-card">$45.00</p>
+
+    <p class="product-stock"></p>
 
     <span class="product-link">View Product →</span>
 
@@ -375,5 +393,16 @@
 </footer>
 
 <script src="assets/js/cart.js"></script>
+<script src="assets/js/product-data.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await window.PKLProducts.updateProductCards();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+</script>
 </body>
 </html>

@@ -326,6 +326,147 @@ function closeCartPopup() {
       purchaseSection.dataset.productPrice
     );
 
+    function getLiveInventory() {
+
+  const inventory =
+    Number.parseInt(
+      purchaseSection.dataset.productInventory,
+      10
+    );
+
+  return Number.isFinite(inventory)
+    ? Math.max(inventory, 0)
+    : 99;
+}
+
+
+function getQuantityAlreadyInCart() {
+
+  const productId =
+    purchaseSection.dataset.productId;
+
+  const cart =
+    getCart();
+
+  const existingProduct =
+    cart.find(
+      (item) =>
+        item.id === productId
+    );
+
+  return existingProduct
+    ? sanitizeQuantity(
+        existingProduct.quantity
+      )
+    : 0;
+}
+
+
+function getRemainingInventory() {
+
+  return Math.max(
+    getLiveInventory() -
+      getQuantityAlreadyInCart(),
+    0
+  );
+
+}
+
+
+function refreshInventoryMessage() {
+  const stockElement =
+    purchaseSection.querySelector(
+      ".product-stock"
+    );
+
+  if (!stockElement) {
+    return;
+  }
+
+
+  const liveInventory =
+    getLiveInventory();
+
+  const alreadyInCart =
+    getQuantityAlreadyInCart();
+
+  const remainingInventory =
+    getRemainingInventory();
+
+
+  if (liveInventory <= 0) {
+
+    stockElement.textContent =
+      "Sold Out";
+
+    stockElement.className =
+      "product-stock sold-out";
+
+    return;
+  }
+
+
+  if (alreadyInCart <= 0) {
+
+    stockElement.textContent =
+      `${liveInventory} in stock`;
+
+    return;
+  }
+
+
+  if (remainingInventory <= 0) {
+
+    stockElement.textContent =
+      `${liveInventory} in stock • All available inventory is in your cart`;
+
+    return;
+  }
+
+
+  stockElement.textContent =
+    `${liveInventory} in stock • ${alreadyInCart} in your cart • ${remainingInventory} more available`;
+
+}
+
+purchaseSection.addEventListener(
+  "pkl:inventory-updated",
+  () => {
+
+    refreshInventoryMessage();
+
+    const remainingInventory =
+      getRemainingInventory();
+
+
+    if (remainingInventory <= 0) {
+
+      plusButton.disabled = true;
+
+      addToCartButton.disabled = true;
+
+      addToCartButton.textContent =
+        "Maximum In Cart";
+
+      quantityInput.max = "1";
+
+      return;
+    }
+
+
+    plusButton.disabled = false;
+
+    addToCartButton.disabled = false;
+
+    addToCartButton.textContent =
+      "Add to Cart";
+
+    quantityInput.max =
+      String(remainingInventory);
+
+  }
+);
+
     function refreshBulkMessage() {
       const quantity = sanitizeQuantity(
         quantityInput.value
@@ -360,15 +501,30 @@ function closeCartPopup() {
     });
 
     plusButton.addEventListener("click", () => {
-      const currentQuantity = sanitizeQuantity(
-        quantityInput.value
-      );
 
-      if (currentQuantity < 99) {
-        quantityInput.value = currentQuantity + 1;
-        refreshBulkMessage();
-      }
-    });
+  const currentQuantity =
+    sanitizeQuantity(
+      quantityInput.value
+    );
+
+  const remainingInventory =
+    getRemainingInventory();
+
+
+  if (
+    remainingInventory > 0 &&
+    currentQuantity <
+      remainingInventory
+  ) {
+
+    quantityInput.value =
+      currentQuantity + 1;
+
+    refreshBulkMessage();
+
+  }
+
+});
 
     quantityInput.addEventListener(
       "input",
@@ -380,78 +536,209 @@ function closeCartPopup() {
       refreshBulkMessage
     );
 
-    addToCartButton.addEventListener("click", () => {
-      const quantityToAdd = sanitizeQuantity(
-        quantityInput.value
+   addToCartButton.addEventListener("click", () => {
+
+  const liveInventory =
+    getLiveInventory();
+
+  const cart =
+    getCart();
+
+  const productId =
+    purchaseSection.dataset.productId;
+
+  const existingProduct =
+    cart.find(
+      (item) =>
+        item.id === productId
+    );
+
+  const alreadyInCart =
+    existingProduct
+      ? sanitizeQuantity(
+          existingProduct.quantity
+        )
+      : 0;
+
+  const remainingInventory =
+    Math.max(
+      liveInventory -
+        alreadyInCart,
+      0
+    );
+
+
+  if (remainingInventory <= 0) {
+
+    refreshInventoryMessage();
+
+    if (confirmationMessage) {
+
+      confirmationMessage.textContent =
+        "You already have the maximum available quantity of this product in your cart.";
+
+      confirmationMessage.classList.add(
+        "visible"
       );
 
-      const cart = getCart();
+    }
 
-      const product = {
-        id: purchaseSection.dataset.productId,
-        name: purchaseSection.dataset.productName,
-        price: productPrice,
-        image: purchaseSection.dataset.productImage,
-        url: purchaseSection.dataset.productUrl,
-        quantity: quantityToAdd
-      };
+    return;
+  }
 
-      if (!product.id || !product.name) {
-        console.error(
-          "Product data is missing an ID or name."
-        );
 
-        return;
-      }
+  const requestedQuantity =
+    sanitizeQuantity(
+      quantityInput.value
+    );
 
-      const existingProduct = cart.find(
-        (item) => item.id === product.id
-      );
 
-      if (existingProduct) {
-        existingProduct.quantity =
-          sanitizeQuantity(existingProduct.quantity) +
-          quantityToAdd;
+  const quantityToAdd =
+    Math.min(
+      requestedQuantity,
+      remainingInventory
+    );
 
-        existingProduct.quantity = Math.min(
-          existingProduct.quantity,
-          99
-        );
-      } else {
-        cart.push(product);
-      }
 
-      saveCart(cart);
+  const productPrice =
+    Number.parseFloat(
+      purchaseSection.dataset.productPrice
+    );
 
-showCartPopup(product.name);
 
-const updatedProduct = cart.find(
-  (item) => item.id === product.id
-);
+  const product = {
+    id:
+      productId,
 
-if (!confirmationMessage || !updatedProduct) {
-  return;
-}
+    name:
+      purchaseSection.dataset.productName,
 
-      const discountRate = getDiscountRate(
+    price:
+      productPrice,
+
+    image:
+      purchaseSection.dataset.productImage,
+
+    url:
+      purchaseSection.dataset.productUrl,
+
+    quantity:
+      quantityToAdd
+  };
+
+
+  if (
+    !product.id ||
+    !product.name
+  ) {
+
+    console.error(
+      "Product data is missing an ID or name."
+    );
+
+    return;
+  }
+
+
+  if (existingProduct) {
+
+    existingProduct.quantity =
+      alreadyInCart +
+      quantityToAdd;
+
+  } else {
+
+    cart.push(product);
+
+  }
+
+
+  saveCart(cart);
+
+  refreshInventoryMessage();
+
+  showCartPopup(
+    product.name
+  );
+
+
+  const updatedProduct =
+    cart.find(
+      (item) =>
+        item.id === product.id
+    );
+
+
+  if (
+    confirmationMessage &&
+    updatedProduct
+  ) {
+
+    const discountRate =
+      getDiscountRate(
         updatedProduct.quantity
       );
 
-      confirmationMessage.textContent =
-        discountRate > 0
-          ? `${quantityToAdd} added to your cart. ` +
-            `${discountRate * 100}% bulk discount ` +
-            `is active for this product.`
-          : `${quantityToAdd} added to your cart.`;
 
-      confirmationMessage.classList.add("visible");
+    confirmationMessage.textContent =
+      discountRate > 0
+        ? `${quantityToAdd} added to your cart. ` +
+          `${discountRate * 100}% bulk discount ` +
+          `is active for this product.`
+        : `${quantityToAdd} added to your cart.`;
 
-      window.setTimeout(() => {
-        confirmationMessage.classList.remove("visible");
-      }, 4000);
-    });
+
+    confirmationMessage.classList.add(
+      "visible"
+    );
+
+
+    window.setTimeout(
+      () => {
+
+        confirmationMessage.classList.remove(
+          "visible"
+        );
+
+      },
+      4000
+    );
+
+  }
+
+
+  const remainingAfterAdd =
+    liveInventory -
+    updatedProduct.quantity;
+
+
+  if (remainingAfterAdd <= 0) {
+
+    addToCartButton.disabled =
+      true;
+
+    addToCartButton.textContent =
+      "Maximum In Cart";
+
+    plusButton.disabled =
+      true;
+
+  } else {
+
+    quantityInput.max =
+      String(
+        remainingAfterAdd
+      );
+
+    quantityInput.value =
+      "1";
+
+  }
+
+});
 
     refreshBulkMessage();
+    refreshInventoryMessage();
   }
 
   function initializeCartPage() {

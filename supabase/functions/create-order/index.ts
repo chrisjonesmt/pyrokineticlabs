@@ -27,60 +27,6 @@ type OrderRequest = {
   paymentMethod: "venmo" | "cashapp" | "zelle";
 };
 
-/*
-IMPORTANT:
-These are the SERVER-SIDE authoritative prices.
-The website may display prices, but checkout totals are calculated here.
-*/
-const PRODUCT_CATALOG: Record<
-  string,
-  { name: string; price: number }
-> = {
-  "rt3-10": {
-    name: "RT-3 10mg",
-    price: 60,
-  },
-
-  "rt3-20": {
-    name: "RT-3 20mg",
-    price: 80,
-  },
-
-  "tz2-10": {
-    name: "TZ-2 10mg",
-    price: 50,
-  },
-
-  "tz2-20": {
-    name: "TZ-2 20mg",
-    price: 65,
-  },
-
-  "tz2-30": {
-    name: "TZ-2 30mg",
-    price: 80,
-  },
-
-  "bpc157-10": {
-    name: "BPC-157 10mg",
-    price: 45,
-  },
-
-  "tb500-10": {
-    name: "TB-500 10mg",
-    price: 55,
-  },
-
-  "cjcipa-20": {
-    name: "CJC-1295 / Ipamorelin 20mg",
-    price: 80,
-  },
-
-  "bac-3ml": {
-    name: "BAC Water 3mL",
-    price: 5,
-  },
-};
 
 const SHIPPING_RATE = 15;
 const FREE_SHIPPING_THRESHOLD = 150;

@@ -71,7 +71,7 @@
 
       <div class="price-coa-row">
 
-  <div class="price">$80.00</div>
+  <div class="price">$70.00</div>
 
   <a
     href="../assets/coa/tz2-30mg-coa.pdf"
@@ -110,7 +110,7 @@
   class="product-purchase"
   data-product-id="tz2-30"
   data-product-name="TZ-2 | 30mg"
-  data-product-price="80"
+  data-product-price="70"
   data-product-image="assets/images/products/tz2-30.png"
   data-product-url="products/tz2-30.html"
 >
@@ -135,6 +135,8 @@
     <p>Discounts apply to quantities of this product only.</p>
   </div>
 
+<p class="product-stock"></p>
+  
   <div class="quantity-selector">
     <label for="product-quantity">Quantity</label>
 
@@ -223,9 +225,12 @@
 <section class="related-products">
     <h2>Related Research Compounds</h2>
 
-    <div class="product-grid">
+   <div class="product-grid">
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="rt3-10"
+>
           <a href="rt3-10.html"
               class="product-card-overlay"
               aria-label="View RT-3 10mg">
@@ -236,10 +241,16 @@
             <span class="product-category">Metabolic Research</span>
             <h3>RT-3</h3>
             <p class="product-size">10mg</p>
+            <p class="related-price product-price-card">$45.00</p>
+
+            <p class="product-stock"></p>
             <a href="rt3-10.html" class="product-link">View Product →</a>
         </div>
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="rt3-20"
+>
           <a href="rt3-20.html"
               class="product-card-overlay"
               aria-label="View RT-3 20mg">
@@ -250,10 +261,16 @@
             <span class="product-category">Metabolic Research</span>
             <h3>RT-3</h3>
             <p class="product-size">20mg</p>
+            <p class="related-price product-price-card">$70.00</p>
+
+            <p class="product-stock"></p>
             <a href="rt3-20.html" class="product-link">View Product →</a>
         </div>
 
-        <div class="product-card">
+       <div
+  class="product-card"
+  data-product-id="tz2-10"
+>
           <a href="tz2-10.html"
               class="product-card-overlay"
               aria-label="View TZ-2 10mg">
@@ -264,6 +281,9 @@
             <span class="product-category">Metabolic Research</span>
             <h3>TZ-2</h3>
             <p class="product-size">10mg</p>
+            <p class="related-price product-price-card">$40.00</p>
+
+            <p class="product-stock"></p>
             <a href="tz2-10.html" class="product-link">View Product →</a>
         </div>
 
@@ -293,5 +313,16 @@
 </footer>
 
 <script src="../assets/js/cart.js"></script>
+<script src="../assets/js/product-data.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await window.PKLProducts.updateProductCards();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+</script>
 </body>
 </html>

@@ -216,6 +216,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
   }
 
+  async function cancelAndRestockOrder(
+  adminKey,
+  orderNumber
+) {
+
+  const response = await fetch(
+    ADMIN_ORDERS_ENDPOINT,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":
+          `Bearer ${adminKey}`
+      },
+
+      body: JSON.stringify({
+        action:
+          "cancel_and_restock",
+
+        orderNumber
+      })
+    }
+  );
+
+
+  let result;
+
+  try {
+
+    result =
+      await response.json();
+
+  } catch {
+
+    throw new Error(
+      "The server returned an invalid response."
+    );
+
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      result?.error ||
+      "Unable to cancel and restock the order."
+    );
+
+  }
+
+
+  return result;
+
+}
 
   /* =========================================================
      SUMMARY
@@ -594,10 +649,125 @@ document.addEventListener("DOMContentLoaded", () => {
 
         </div>
 
+        <div class="admin-order-actions">
+
+  ${
+    order.order_status !== "cancelled"
+      ? `
+        <button
+          type="button"
+          class="admin-cancel-restock-button"
+          data-order-number="${escapeHtml(
+            order.order_number
+          )}"
+        >
+          Cancel Order & Restock
+        </button>
+      `
+      : `
+        <span class="admin-order-cancelled-label">
+          Order Cancelled
+        </span>
+      `
+  }
+
+</div>
+
       `;
 
 
       ordersList.appendChild(card);
+
+      const cancelButton =
+  card.querySelector(
+    ".admin-cancel-restock-button"
+  );
+
+
+if (cancelButton) {
+
+  cancelButton.addEventListener(
+    "click",
+    async () => {
+
+      const orderNumber =
+        cancelButton.dataset.orderNumber;
+
+      const shouldCancel =
+        window.confirm(
+          `Cancel ${orderNumber} and return all items to inventory?`
+        );
+
+
+      if (!shouldCancel) {
+        return;
+      }
+
+
+      const adminKey =
+        getAdminKey();
+
+
+      if (!adminKey) {
+
+        ordersMessage.textContent =
+          "Administrator session expired.";
+
+        return;
+      }
+
+
+      cancelButton.disabled =
+        true;
+
+      cancelButton.textContent =
+        "Cancelling...";
+
+
+      try {
+
+        await cancelAndRestockOrder(
+          adminKey,
+          orderNumber
+        );
+
+
+        ordersMessage.textContent =
+          `${orderNumber} cancelled and inventory restored.`;
+
+
+        await loadDashboard(
+          adminKey
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Cancel/restock error:",
+          error
+        );
+
+
+        ordersMessage.textContent =
+          error instanceof Error
+            ? error.message
+            : "Unable to cancel the order.";
+
+
+        cancelButton.disabled =
+          false;
+
+        cancelButton.textContent =
+          "Cancel Order & Restock";
+
+      }
+
+    }
+  );
+
+}
+
+     
 
     });
 

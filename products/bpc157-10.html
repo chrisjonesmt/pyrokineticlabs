@@ -71,7 +71,7 @@
 
 <div class="price-coa-row">
 
-  <div class="price">$45.00</div>
+  <div class="price">$35.00</div>
 
   <a
     href="../assets/coa/bpc157-10mg-coa.pdf"
@@ -110,7 +110,7 @@
   class="product-purchase"
   data-product-id="bpc157-10"
   data-product-name="BPC-157 | 10mg"
-  data-product-price="45"
+  data-product-price="35"
   data-product-image="assets/images/products/bpc157-10.png"
   data-product-url="products/bpc157-10.html"
 >
@@ -195,7 +195,7 @@
       box-shadow: none;
     "
   >
-    Temporarily Unavailable
+    Pending COA - Not Available for Purchase
   </button>
 
   <p
@@ -260,7 +260,10 @@ This product is supplied as a lyophilized powder and is intended strictly for qu
 
     <div class="product-grid">
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="tb500-10"
+>
           <a href="tb500-10.html"
               class="product-card-overlay"
               aria-label="View TB-500 10mg">
@@ -271,10 +274,16 @@ This product is supplied as a lyophilized powder and is intended strictly for qu
             <span class="product-category">Recovery Research</span>
             <h3>TB-500</h3>
             <p class="product-size">10mg</p>
+            <p class="related-price product-price-card">$45.00</p>
+
+            <p class="product-stock"></p>
             <a href="tb500-10.html" class="product-link">View Product →</a>
         </div>
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="cjcipa-20"
+>
           <a href="cjcipa-20.html"
               class="product-card-overlay"
               aria-label="View CJC+IPA 20mg">
@@ -285,12 +294,18 @@ This product is supplied as a lyophilized powder and is intended strictly for qu
             <span class="product-category">GH Research</span>
             <h3>CJC+IPA</h3>
             <p class="product-size">20mg</p>
+            <p class="related-price product-price-card">$70.00</p>
+
+            <p class="product-stock"></p>
             <a href="cjcipa-20.html" class="product-link">View Product →</a>
         </div>
 
-        <div class="product-card">
+        <div
+  class="product-card"
+  data-product-id="bac-3ml"
+>
           <div class="unavailable-ribbon">
-  Coming Soon
+  Pending COA
 </div>
           <a href="bac-3ml.html"
               class="product-card-overlay"
@@ -302,6 +317,9 @@ This product is supplied as a lyophilized powder and is intended strictly for qu
             <span class="product-category">Research Supply</span>
             <h3>BAC Water</h3>
             <p class="product-size">3ml</p>
+            <p class="related-price product-price-card">$6.00</p>
+
+            <p class="product-stock"></p>
             <a href="bac-3ml.html" class="product-link">View Product →</a>
         </div>
 
@@ -329,5 +347,16 @@ This product is supplied as a lyophilized powder and is intended strictly for qu
 </footer>
 
 <script src="../assets/js/cart.js"></script>
+<script src="../assets/js/product-data.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await window.PKLProducts.updateProductCards();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+</script>
 </body>
 </html>
