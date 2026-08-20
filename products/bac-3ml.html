@@ -112,107 +112,80 @@
 
 <div
   class="product-purchase"
-  data-product-id="bac-water-3ml"
+  data-product-id="bac-3ml"
   data-product-name="BAC Water | 3ml"
   data-product-price="6"
   data-product-image="assets/images/products/bac-3ml.png"
   data-product-url="products/bac-3ml.html"
 >
 
-  <div class="bulk-savings-card" style="display: none;">
-    <h3>Bulk Savings</h3>
+ <div class="bulk-savings-card">
+  <h3>Bulk Savings</h3>
 
-    <div class="bulk-tier">
-      <span>3–4 vials</span>
-      <strong>Save 10%</strong>
-    </div>
-
-    <div class="bulk-tier">
-      <span>5–9 vials</span>
-      <strong>Save 15%</strong>
-    </div>
-
-    <div class="bulk-tier">
-      <span>10+ vials</span>
-      <strong>Save 20%</strong>
-    </div>
-
-    <p>Discounts apply to quantities of this product only.</p>
+  <div class="bulk-tier">
+    <span>3–4 vials</span>
+    <strong>Save 10%</strong>
   </div>
 
-  <div class="quantity-selector" style="display: none;">
-    <label for="product-quantity">Quantity</label>
-
-    <div class="quantity-controls">
-      <button
-        type="button"
-        class="quantity-button quantity-minus"
-        aria-label="Decrease quantity"
-      >
-        −
-      </button>
-
-      <input
-        type="number"
-        id="product-quantity"
-        class="product-quantity"
-        value="1"
-        min="1"
-        max="99"
-        inputmode="numeric"
-      >
-
-      <button
-        type="button"
-        class="quantity-button quantity-plus"
-        aria-label="Increase quantity"
-      >
-        +
-      </button>
-    </div>
+  <div class="bulk-tier">
+    <span>5–9 vials</span>
+    <strong>Save 15%</strong>
   </div>
 
-  <div
-    class="bulk-progress-message"
-    aria-live="polite"
-    style="display: none;"
-  >
-    Add 2 more vials to unlock 10% off.
+  <div class="bulk-tier">
+    <span>10+ vials</span>
+    <strong>Save 20%</strong>
   </div>
 
-  <button
-    type="button"
-    disabled
-    style="
-      display: block;
-      width: 100%;
-      padding: 18px 24px;
-      margin-top: 20px;
-      background: #4B5563;
-      color: #D1D5DB;
-      border: 1px solid #6B7280;
-      border-radius: 8px;
-      font-family: 'Open Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 800;
-      cursor: not-allowed;
-      box-shadow: none;
-    "
-  >
-    Pending COA - Not Available for Purchase
-  </button>
+  <p>Discounts apply to quantities of this product only.</p>
+</div>
 
-  <p
-    style="
-      margin: 10px 0 28px;
-      color: #F47C20;
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-align: center;
-    "
-  >
-    Awaiting batch testing documentation
-  </p>
+<p class="product-stock"></p>
+
+<div class="quantity-selector">
+  <label for="product-quantity">Quantity</label>
+
+  <div class="quantity-controls">
+    <button
+      type="button"
+      class="quantity-button quantity-minus"
+      aria-label="Decrease quantity"
+    >
+      −
+    </button>
+
+    <input
+      type="number"
+      id="product-quantity"
+      class="product-quantity"
+      value="1"
+      min="1"
+      max="99"
+      inputmode="numeric"
+    >
+
+    <button
+      type="button"
+      class="quantity-button quantity-plus"
+      aria-label="Increase quantity"
+    >
+      +
+    </button>
+  </div>
+</div>
+
+<div class="bulk-progress-message" aria-live="polite">
+  Add 2 more vials to unlock 10% off.
+</div>
+
+<button
+  type="button"
+  class="btn-primary add-to-cart-button"
+>
+  Add to Cart
+</button>
+
+<div class="add-to-cart-message" aria-live="polite"></div>
 
 </div>
   </section>
