@@ -111,10 +111,56 @@
         <strong id="regular-subtotal">$0.00</strong>
       </div>
 
-      <div class="summary-line discount-summary-line">
-        <span>Bulk savings</span>
-        <strong id="bulk-savings">−$0.00</strong>
-      </div>
+      <div
+  class="summary-line discount-summary-line"
+  id="bulk-savings-row"
+>
+  <span>Bulk savings</span>
+  <strong id="bulk-savings">−$0.00</strong>
+</div>
+
+<div class="promo-code-box">
+
+  <label for="promo-code-input">
+    Promo Code
+  </label>
+
+  <div class="promo-code-row">
+
+    <input
+  type="text"
+  id="promo-code-input"
+  class="promo-code-input"
+  autocomplete="off"
+  placeholder="Enter promo code"
+>
+
+    <button
+      type="button"
+      id="apply-promo-button"
+      class="promo-code-button"
+    >
+      Apply
+    </button>
+
+  </div>
+
+  <div
+    id="promo-code-message"
+    class="promo-code-message"
+    aria-live="polite"
+  ></div>
+
+</div>
+
+<div
+  class="summary-line discount-summary-line"
+  id="promo-savings-row"
+  hidden
+>
+  <span>Promo savings</span>
+  <strong id="promo-savings">−$0.00</strong>
+</div>
 
       <div class="summary-line">
         <span>Discounted subtotal</span>

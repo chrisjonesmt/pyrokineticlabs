@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const SHIPPING_RATE = 15;
   const FREE_SHIPPING_THRESHOLD = 150;
 
+  const PROMO_STORAGE_KEY = "pyroKineticLabsPromo";
+const SITE_LAUNCH_PROMO_CODE = "SITELAUNCH20";
+const SITE_LAUNCH_PROMO_RATE = 0.20;
+
   function getCart() {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
@@ -27,9 +31,94 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Unable to save cart:", error);
     }
 }    
+function getSavedPromoCode() {
 
+  try {
+    return (
+      localStorage.getItem(
+        PROMO_STORAGE_KEY
+      ) || ""
+    ).trim();
+  } catch (error) {
+
+    console.error(
+      "Unable to read promo code:",
+      error
+    );
+
+    return "";
+  }
+
+}
+
+
+function savePromoCode(code) {
+
+  try {
+
+    if (code) {
+
+      localStorage.setItem(
+        PROMO_STORAGE_KEY,
+        code
+      );
+
+    } else {
+
+      localStorage.removeItem(
+        PROMO_STORAGE_KEY
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Unable to save promo code:",
+      error
+    );
+
+  }
+
+}
+
+
+function isSiteLaunchPromoActive() {
+
+  return (
+    getSavedPromoCode()
+      .toUpperCase() ===
+      SITE_LAUNCH_PROMO_CODE &&
+    isSiteLaunchPromoWindowOpen()
+  );
+
+}
      function getSiteRootPath() {
     return window.location.pathname.includes("/products/") ? "../" : "";
+}
+
+const SITE_LAUNCH_PROMO_START =
+  Date.parse(
+    "2026-08-22T00:00:00Z"
+  );
+
+const SITE_LAUNCH_PROMO_END =
+  Date.parse(
+    "2026-08-24T00:00:00Z"
+  );
+
+  function isSiteLaunchPromoWindowOpen() {
+
+  const now =
+    Date.now();
+
+  return (
+    now >=
+      SITE_LAUNCH_PROMO_START &&
+    now <
+      SITE_LAUNCH_PROMO_END
+  );
+
 }
 
 function createCartPopup() {
@@ -258,7 +347,73 @@ function closeCartPopup() {
       }
     );
   }
+function calculateEffectiveCartTotals(cart) {
 
+  const totals =
+    calculateCartTotals(cart);
+
+  const promoActive =
+    isSiteLaunchPromoActive();
+
+
+  if (!promoActive) {
+
+    return {
+      ...totals,
+
+      promoActive: false,
+
+      promoSavings: 0,
+
+      effectiveSubtotal:
+        totals.discountedSubtotal
+    };
+
+  }
+
+
+  const promoSubtotal =
+    totals.regularSubtotal *
+    (1 - SITE_LAUNCH_PROMO_RATE);
+
+  const promoSavings =
+    totals.regularSubtotal -
+    promoSubtotal;
+
+
+  /*
+    IMPORTANT:
+    Do not stack promo + bulk discounts.
+
+    We simply use whichever final subtotal
+    is lower for the customer.
+  */
+
+  const effectiveSubtotal =
+    Math.min(
+      totals.discountedSubtotal,
+      promoSubtotal
+    );
+
+
+  const effectiveSavings =
+    totals.regularSubtotal -
+    effectiveSubtotal;
+
+
+  return {
+    ...totals,
+
+    promoActive: true,
+
+    promoSavings,
+
+    effectiveSavings,
+
+    effectiveSubtotal
+  };
+
+}
   function updateCartCount() {
     const cart = getCart();
 
@@ -748,7 +903,10 @@ purchaseSection.addEventListener(
     if (!cartItemsContainer) {
       return;
     }
-
+    const bulkSavingsRow =
+  document.getElementById(
+    "bulk-savings-row"
+  );
     const emptyCart =
       document.getElementById("empty-cart");
 
@@ -766,6 +924,45 @@ purchaseSection.addEventListener(
         "checkout-status-message"
       );
 
+      const promoCodeInput =
+  document.getElementById(
+    "promo-code-input"
+  );
+
+const applyPromoButton =
+  document.getElementById(
+    "apply-promo-button"
+  );
+
+const promoCodeMessage =
+  document.getElementById(
+    "promo-code-message"
+  );
+
+const promoSavingsRow =
+  document.getElementById(
+    "promo-savings-row"
+  );
+
+const promoSavingsElement =
+  document.getElementById(
+    "promo-savings"
+  );
+if (
+  promoCodeInput &&
+  isSiteLaunchPromoActive()
+) {
+  promoCodeInput.value =
+    SITE_LAUNCH_PROMO_CODE;
+}
+
+if (
+  promoCodeMessage &&
+  isSiteLaunchPromoActive()
+) {
+  promoCodeMessage.textContent =
+    "SITELAUNCH20 applied — 20% off.";
+}
     function renderCart() {
       const cart = getCart();
 
@@ -1054,21 +1251,42 @@ purchaseSection.addEventListener(
     }
 
     function updateCartSummary(cart) {
-      const totals = calculateCartTotals(cart);
+const totals = calculateEffectiveCartTotals(cart);
+if (bulkSavingsRow) {
+  bulkSavingsRow.style.display =
+    totals.promoActive
+      ? "none"
+      : "flex";
+}
 
+if (promoSavingsRow) {
+  promoSavingsRow.style.display =
+    totals.promoActive
+      ? "flex"
+      : "none";
+}
+
+if (promoSavingsElement) {
+  promoSavingsElement.textContent =
+  totals.promoActive
+    ? `−${formatCurrency(
+        totals.effectiveSavings
+      )}`
+    : formatCurrency(0);
+}
       const shipping =
-        cart.length === 0
-          ? 0
-          : totals.discountedSubtotal >=
-              FREE_SHIPPING_THRESHOLD
-            ? 0
-            : SHIPPING_RATE;
+  cart.length === 0
+    ? 0
+    : totals.effectiveSubtotal >=
+        FREE_SHIPPING_THRESHOLD
+      ? 0
+      : SHIPPING_RATE;
 
       const finalTotal =
-        totals.discountedSubtotal + shipping;
+  totals.effectiveSubtotal + shipping;
 
       const regularSubtotalElement =
-        document.getElementById(
+        document.getElementById( 
           "regular-subtotal"
         );
 
@@ -1105,9 +1323,9 @@ purchaseSection.addEventListener(
 
       if (discountedSubtotalElement) {
         discountedSubtotalElement.textContent =
-          formatCurrency(
-            totals.discountedSubtotal
-          );
+  formatCurrency(
+    totals.effectiveSubtotal
+  );
       }
 
       if (shippingCostElement) {
@@ -1161,7 +1379,80 @@ purchaseSection.addEventListener(
         "free-shipping-unlocked"
       );
     }
+applyPromoButton?.addEventListener(
+  "click",
+  () => {
 
+    const enteredCode =
+      String(
+        promoCodeInput?.value || ""
+      )
+        .trim()
+        .toUpperCase();
+
+
+    if (
+  enteredCode ===
+  SITE_LAUNCH_PROMO_CODE
+) {
+
+  if (
+    !isSiteLaunchPromoWindowOpen()
+  ) {
+
+    savePromoCode("");
+
+    if (promoCodeMessage) {
+
+      const now = Date.now();
+
+      if (
+        now <
+        SITE_LAUNCH_PROMO_START
+      ) {
+
+        promoCodeMessage.textContent =
+          "SITELAUNCH20 begins Friday at 7:00 PM CT.";
+
+      } else {
+
+        promoCodeMessage.textContent =
+          "SITELAUNCH20 has ended.";
+
+      }
+
+    }
+
+    renderCart();
+    return;
+  }
+
+
+  savePromoCode(
+    SITE_LAUNCH_PROMO_CODE
+  );
+
+  if (promoCodeMessage) {
+    promoCodeMessage.textContent =
+      "SITELAUNCH20 applied — 20% off.";
+  }
+
+  renderCart();
+  return;
+}
+
+
+    savePromoCode("");
+
+    if (promoCodeMessage) {
+      promoCodeMessage.textContent =
+        "Invalid promo code.";
+    }
+
+    renderCart();
+
+  }
+);
     clearCartButton?.addEventListener("click", () => {
       const shouldClear = window.confirm(
         "Remove all items from your cart?"

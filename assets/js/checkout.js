@@ -1,8 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   const CART_STORAGE_KEY = "pyroKineticLabsCart";
+const PROMO_STORAGE_KEY = "pyroKineticLabsPromo";
 
-  const SHIPPING_RATE = 15;
+const SITE_LAUNCH_PROMO_CODE =
+  "SITELAUNCH20";
+
+const SITE_LAUNCH_PROMO_START =
+  Date.parse(
+    "2026-08-22T00:00:00Z"
+  );
+
+const SITE_LAUNCH_PROMO_END =
+  Date.parse(
+    "2026-08-24T00:00:00Z"
+  );
+
+const SHIPPING_RATE = 15;
   const FREE_SHIPPING_THRESHOLD = 150;
 
 
@@ -27,8 +41,42 @@ document.addEventListener("DOMContentLoaded", () => {
       return [];
     }
   }
+function getSavedPromoCode() {
 
+  try {
+    return (
+      localStorage.getItem(
+        PROMO_STORAGE_KEY
+      ) || ""
+    )
+      .trim()
+      .toUpperCase();
 
+  } catch (error) {
+
+    console.error(
+      "Unable to read promo code:",
+      error
+    );
+
+    return "";
+  }
+
+}
+
+function isSiteLaunchPromoWindowOpen() {
+
+  const now =
+    Date.now();
+
+  return (
+    now >=
+      SITE_LAUNCH_PROMO_START &&
+    now <
+      SITE_LAUNCH_PROMO_END
+  );
+
+}
   function formatCurrency(value) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -100,27 +148,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function calculateCartTotals(cart) {
 
-    return cart.reduce(
-      (totals, item) => {
+  const totals = cart.reduce(
+    (totals, item) => {
 
-        const itemTotals =
-          calculateItemTotals(item);
+      const itemTotals =
+        calculateItemTotals(item);
 
-        totals.regularSubtotal +=
-          itemTotals.regularSubtotal;
+      totals.regularSubtotal +=
+        itemTotals.regularSubtotal;
 
-        totals.discountedSubtotal +=
-          itemTotals.discountedSubtotal;
+      totals.discountedSubtotal +=
+        itemTotals.discountedSubtotal;
 
-        return totals;
+      return totals;
 
-      },
-      {
-        regularSubtotal: 0,
-        discountedSubtotal: 0
-      }
-    );
+    },
+    {
+      regularSubtotal: 0,
+      discountedSubtotal: 0
+    }
+  );
+
+
+  const promoCode =
+    getSavedPromoCode();
+
+
+  if (
+  promoCode !==
+    SITE_LAUNCH_PROMO_CODE ||
+  !isSiteLaunchPromoWindowOpen()
+) {
+
+    return {
+      ...totals,
+      promoCode: "",
+      effectiveSubtotal:
+        totals.discountedSubtotal
+    };
+
   }
+
+
+  const promoSubtotal =
+    totals.regularSubtotal * 0.80;
+
+
+  return {
+    ...totals,
+    promoCode:
+      "SITELAUNCH20",
+
+    effectiveSubtotal:
+      Math.min(
+        totals.discountedSubtotal,
+        promoSubtotal
+      )
+  };
+
+}
+   
+  
 
 
   function renderCheckout() {
@@ -250,21 +338,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const shipping =
-      totals.discountedSubtotal >=
-        FREE_SHIPPING_THRESHOLD
-        ? 0
-        : SHIPPING_RATE;
+  totals.effectiveSubtotal >=
+    FREE_SHIPPING_THRESHOLD
+    ? 0
+    : SHIPPING_RATE;
 
 
     const finalTotal =
-      totals.discountedSubtotal +
+      totals.effectiveSubtotal +
       shipping;
 
 
     subtotalElement.textContent =
-      formatCurrency(
-        totals.discountedSubtotal
-      );
+  formatCurrency(
+    totals.effectiveSubtotal
+  );
 
 
     shippingElement.textContent =
@@ -374,15 +462,17 @@ checkoutForm?.addEventListener("submit", async (event) => {
 
 
       items: cart.map((item) => ({
-        id: item.id,
-        quantity: sanitizeQuantity(
-          item.quantity
-        )
-      })),
+  id: item.id,
+  quantity: sanitizeQuantity(
+    item.quantity
+  )
+})),
 
+promoCode:
+  getSavedPromoCode(),
 
-      paymentMethod:
-        String(paymentMethod || "")
+paymentMethod:
+  String(paymentMethod || "")
 
     };
 

@@ -272,6 +272,180 @@ document.addEventListener("DOMContentLoaded", () => {
 
 }
 
+async function markPaymentReceived(
+  adminKey,
+  orderNumber
+) {
+
+  const response = await fetch(
+    ADMIN_ORDERS_ENDPOINT,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":
+          `Bearer ${adminKey}`
+      },
+
+      body: JSON.stringify({
+        action:
+          "mark_payment_received",
+
+        orderNumber
+      })
+    }
+  );
+
+
+  let result;
+
+  try {
+
+    result =
+      await response.json();
+
+  } catch {
+
+    throw new Error(
+      "The server returned an invalid response."
+    );
+
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      result?.error ||
+      "Unable to mark payment as received."
+    );
+
+  }
+
+
+  return result;
+
+}
+
+async function markOrderShipped(
+  adminKey,
+  orderNumber,
+  trackingNumber
+) {
+
+  const response = await fetch(
+    ADMIN_ORDERS_ENDPOINT,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":
+          `Bearer ${adminKey}`
+      },
+
+      body: JSON.stringify({
+        action:
+          "mark_shipped",
+
+        orderNumber,
+
+        trackingNumber
+      })
+    }
+  );
+
+
+  let result;
+
+  try {
+
+    result =
+      await response.json();
+
+  } catch {
+
+    throw new Error(
+      "The server returned an invalid response."
+    );
+
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      result?.error ||
+      "Unable to mark the order as shipped."
+    );
+
+  }
+
+
+  return result;
+
+}
+
+async function saveInternalNotes(
+  adminKey,
+  orderNumber,
+  internalNotes
+) {
+
+  const response = await fetch(
+    ADMIN_ORDERS_ENDPOINT,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":
+          `Bearer ${adminKey}`
+      },
+
+      body: JSON.stringify({
+        action:
+          "save_internal_notes",
+
+        orderNumber,
+
+        internalNotes
+      })
+    }
+  );
+
+
+  let result;
+
+  try {
+
+    result =
+      await response.json();
+
+  } catch {
+
+    throw new Error(
+      "The server returned an invalid response."
+    );
+
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      result?.error ||
+      "Unable to save internal notes."
+    );
+
+  }
+
+
+  return result;
+
+}
+
   /* =========================================================
      SUMMARY
      ========================================================= */
@@ -589,13 +763,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
           <section class="admin-order-section">
 
-            <h4>Internal Notes</h4>
+  <h4>Internal Notes</h4>
 
-            <div>
-              ${notes}
-            </div>
+  <textarea
+    class="admin-internal-notes-input"
+    data-order-number="${escapeHtml(
+      order.order_number
+    )}"
+    rows="4"
+    placeholder="Add internal notes..."
+  >${escapeHtml(
+    order.internal_notes || ""
+  )}</textarea>
 
-          </section>
+  <button
+    type="button"
+    class="admin-save-notes-button"
+    data-order-number="${escapeHtml(
+      order.order_number
+    )}"
+  >
+    Save Notes
+  </button>
+
+</section>
 
         </div>
 
@@ -654,6 +845,62 @@ document.addEventListener("DOMContentLoaded", () => {
   ${
     order.order_status !== "cancelled"
       ? `
+
+        ${
+          order.payment_status ===
+          "awaiting_payment"
+            ? `
+              <button
+                type="button"
+                class="admin-payment-received-button"
+                data-order-number="${escapeHtml(
+                  order.order_number
+                )}"
+              >
+                Mark Payment Received
+              </button>
+            `
+            : ""
+        }
+${
+  order.payment_status === "paid" &&
+  order.order_status !== "shipped"
+    ? `
+      <button
+        type="button"
+        class="admin-mark-shipped-button"
+        data-order-number="${escapeHtml(
+          order.order_number
+        )}"
+      >
+        Mark Shipped
+      </button>
+    `
+    : ""
+}
+
+${
+  order.order_status === "shipped"
+    ? `
+      <button
+        type="button"
+        class="admin-edit-tracking-button"
+        data-order-number="${escapeHtml(
+          order.order_number
+        )}"
+        data-tracking-number="${escapeHtml(
+          order.tracking_number || ""
+        )}"
+      >
+        Edit Tracking
+      </button>
+    `
+    : ""
+}
+
+
+
+
         <button
           type="button"
           class="admin-cancel-restock-button"
@@ -675,8 +922,468 @@ document.addEventListener("DOMContentLoaded", () => {
 
       `;
 
+      const editTrackingButton =
+  card.querySelector(
+    ".admin-edit-tracking-button"
+  );
+
+
+if (editTrackingButton) {
+
+  editTrackingButton.addEventListener(
+    "click",
+    async () => {
+
+      const orderNumber =
+        editTrackingButton.dataset.orderNumber;
+
+      const currentTrackingNumber =
+        editTrackingButton.dataset.trackingNumber || "";
+
+
+      const newTrackingNumber =
+  window.prompt(
+    "Update tracking number for " +
+      orderNumber +
+      ":",
+    currentTrackingNumber
+  );
+
+
+      if (newTrackingNumber === null) {
+        return;
+      }
+
+
+      const cleanedTrackingNumber =
+        newTrackingNumber.trim();
+
+
+      if (!cleanedTrackingNumber) {
+
+        ordersMessage.textContent =
+          "Tracking number is required.";
+
+        return;
+      }
+
+
+      const adminKey =
+        getAdminKey();
+
+
+      if (!adminKey) {
+
+        ordersMessage.textContent =
+          "Administrator session expired.";
+
+        return;
+      }
+
+
+      editTrackingButton.disabled =
+        true;
+
+      editTrackingButton.textContent =
+        "Updating...";
+
+
+      try {
+
+        await updateTrackingNumber(
+          adminKey,
+          orderNumber,
+          cleanedTrackingNumber
+        );
+
+
+        ordersMessage.textContent =
+          `${orderNumber} tracking updated.`;
+
+
+        await loadDashboard(
+          adminKey
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Update tracking error:",
+          error
+        );
+
+
+        ordersMessage.textContent =
+          error instanceof Error
+            ? error.message
+            : "Unable to update tracking number.";
+
+
+        editTrackingButton.disabled =
+          false;
+
+        editTrackingButton.textContent =
+          "Edit Tracking";
+
+      }
+
+    }
+  );
+
+}
 
       ordersList.appendChild(card);
+const paymentReceivedButton =
+  card.querySelector(
+    ".admin-payment-received-button"
+  );
+
+  const saveNotesButton =
+  card.querySelector(
+    ".admin-save-notes-button"
+  );
+
+const notesInput =
+  card.querySelector(
+    ".admin-internal-notes-input"
+  );
+
+
+if (
+  saveNotesButton &&
+  notesInput
+) {
+
+  saveNotesButton.addEventListener(
+    "click",
+    async () => {
+
+      const orderNumber =
+        saveNotesButton.dataset.orderNumber;
+
+      const adminKey =
+        getAdminKey();
+
+
+      if (!adminKey) {
+
+        ordersMessage.textContent =
+          "Administrator session expired.";
+
+        return;
+      }
+
+
+      saveNotesButton.disabled =
+        true;
+
+      saveNotesButton.textContent =
+        "Saving...";
+
+
+      try {
+
+        await saveInternalNotes(
+          adminKey,
+          orderNumber,
+          notesInput.value
+        );
+
+
+        ordersMessage.textContent =
+          `${orderNumber} notes saved.`;
+
+
+        await loadDashboard(
+          adminKey
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Save notes error:",
+          error
+        );
+
+
+        ordersMessage.textContent =
+          error instanceof Error
+            ? error.message
+            : "Unable to save internal notes.";
+
+
+        saveNotesButton.disabled =
+          false;
+
+        saveNotesButton.textContent =
+          "Save Notes";
+
+      }
+
+    }
+  );
+
+}
+
+async function updateTrackingNumber(
+  adminKey,
+  orderNumber,
+  trackingNumber
+) {
+
+  const response = await fetch(
+    ADMIN_ORDERS_ENDPOINT,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":
+          `Bearer ${adminKey}`
+      },
+
+      body: JSON.stringify({
+        action:
+          "update_tracking",
+
+        orderNumber,
+
+        trackingNumber
+      })
+    }
+  );
+
+
+  let result;
+
+  try {
+
+    result =
+      await response.json();
+
+  } catch {
+
+    throw new Error(
+      "The server returned an invalid response."
+    );
+
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      result?.error ||
+      "Unable to update tracking number."
+    );
+
+  }
+
+
+  return result;
+
+}
+
+
+if (paymentReceivedButton) {
+
+  paymentReceivedButton.addEventListener(
+    "click",
+    async () => {
+
+      const orderNumber =
+        paymentReceivedButton.dataset.orderNumber;
+
+      const shouldMarkPaid =
+        window.confirm(
+          `Mark payment for ${orderNumber} as received?`
+        );
+
+
+      if (!shouldMarkPaid) {
+        return;
+      }
+
+
+      const adminKey =
+        getAdminKey();
+
+
+      if (!adminKey) {
+
+        ordersMessage.textContent =
+          "Administrator session expired.";
+
+        return;
+      }
+
+
+      paymentReceivedButton.disabled =
+        true;
+
+      paymentReceivedButton.textContent =
+        "Updating...";
+
+
+      try {
+
+        await markPaymentReceived(
+          adminKey,
+          orderNumber
+        );
+
+
+        ordersMessage.textContent =
+          `${orderNumber} marked as paid.`;
+
+
+        await loadDashboard(
+          adminKey
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Payment update error:",
+          error
+        );
+
+
+        ordersMessage.textContent =
+          error instanceof Error
+            ? error.message
+            : "Unable to update payment status.";
+
+
+        paymentReceivedButton.disabled =
+          false;
+
+        paymentReceivedButton.textContent =
+          "Mark Payment Received";
+
+      }
+
+    }
+  );
+
+}
+
+
+
+const markShippedButton =
+  card.querySelector(
+    ".admin-mark-shipped-button"
+  );
+
+
+if (markShippedButton) {
+
+  markShippedButton.addEventListener(
+    "click",
+    async () => {
+
+      const orderNumber =
+        markShippedButton.dataset.orderNumber;
+
+
+      const trackingNumber =
+        window.prompt(
+          `Enter the tracking number for ${orderNumber}:`
+        );
+
+
+      if (trackingNumber === null) {
+        return;
+      }
+
+
+      const cleanedTrackingNumber =
+        trackingNumber.trim();
+
+
+      if (!cleanedTrackingNumber) {
+
+        ordersMessage.textContent =
+          "Tracking number is required.";
+
+        return;
+      }
+
+
+      const shouldShip =
+        window.confirm(
+          `Mark ${orderNumber} as shipped with tracking number ${cleanedTrackingNumber}?`
+        );
+
+
+      if (!shouldShip) {
+        return;
+      }
+
+
+      const adminKey =
+        getAdminKey();
+
+
+      if (!adminKey) {
+
+        ordersMessage.textContent =
+          "Administrator session expired.";
+
+        return;
+      }
+
+
+      markShippedButton.disabled =
+        true;
+
+      markShippedButton.textContent =
+        "Updating...";
+
+
+      try {
+
+        await markOrderShipped(
+          adminKey,
+          orderNumber,
+          cleanedTrackingNumber
+        );
+
+
+        ordersMessage.textContent =
+          `${orderNumber} marked as shipped.`;
+
+
+        await loadDashboard(
+          adminKey
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Mark shipped error:",
+          error
+        );
+
+
+        ordersMessage.textContent =
+          error instanceof Error
+            ? error.message
+            : "Unable to mark the order as shipped.";
+
+
+        markShippedButton.disabled =
+          false;
+
+        markShippedButton.textContent =
+          "Mark Shipped";
+
+      }
+
+    }
+  );
+
+}
 
       const cancelButton =
   card.querySelector(
